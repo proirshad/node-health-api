@@ -88,13 +88,16 @@ jobs:
 
         - name: Terraform Init
           run: terraform init
+          working-directory: terraform
 
         - name: Terraform Apply
           id: tf_apply
           run: terraform apply -auto-approve
+          working-directory: terraform
 
         - name: Export Terraform outputs
           run: |
             echo "ECS_CLUSTER_NAME=$(terraform output -raw ecs_cluster_name)" >> $GITHUB_ENV
             echo "ECS_SERVICE_NAME=$(terraform output -raw ecs_service_name)" >> $GITHUB_ENV
             echo "AWS_REGION=$(terraform output -raw aws_region)" >> $GITHUB_ENV
+          working-directory: terraform  
