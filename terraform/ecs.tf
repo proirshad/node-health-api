@@ -1,5 +1,10 @@
 resource "aws_ecs_cluster" "this" {
   name = "simple-backend-cluster"
+
+  lifecycle {
+    prevent_destroy = false
+    ignore_changes  = [name]
+  }
 }
 
 resource "aws_security_group" "ecs" {
@@ -18,6 +23,10 @@ resource "aws_security_group" "ecs" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  lifecycle {
+    prevent_destroy = false
   }
 }
 
@@ -49,6 +58,10 @@ resource "aws_ecs_task_definition" "this" {
       }
     }
   ])
+
+  lifecycle {
+    ignore_changes = [container_definitions]
+  }
 }
 
 resource "aws_ecs_service" "this" {
@@ -71,4 +84,8 @@ resource "aws_ecs_service" "this" {
   }
 
   depends_on = [aws_lb_listener.http]
+
+  lifecycle {
+    prevent_destroy = false
+  }
 }
