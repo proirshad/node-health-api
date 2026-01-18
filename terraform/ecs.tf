@@ -1,21 +1,16 @@
-resource "aws_cloudwatch_log_group" "ecs" {
-  name              = "/ecs/simple-backend"
-  retention_in_days = 7
-}
-
 resource "aws_ecs_cluster" "this" {
   name = "simple-backend-cluster"
 }
 
-resource "aws_security_group" "ecs_sg" {
-  name   = "ecs-backend-sg"
+resource "aws_security_group" "ecs" {
+  name   = "ecs-sg"
   vpc_id = var.vpc_id
 
   ingress {
     from_port       = 50000
     to_port         = 50000
     protocol        = "tcp"
-    security_groups = [aws_security_group.alb_sg.id]
+    security_groups = [aws_security_group.alb.id]
   }
 
   egress {
@@ -26,20 +21,19 @@ resource "aws_security_group" "ecs_sg" {
   }
 }
 
-resource "aws_ecs_task_definition" "backend" {
+resource "aws_ecs_task_definition" "this" {
   family                   = "simple-backend"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = "256"
-  memory                   = "512"
+  cpu                      = 256
+  memory                   = 512
 
-  execution_role_arn = aws_iam_role.ecs_task_execution.arn
-  task_role_arn      = aws_iam_role.ecs_task_role.arn
+  execution_role_arn = aws_iam_role.ecs_execution.arn
 
   container_definitions = jsonencode([
     {
       name  = "backend"
-      image = "${var.ecr_repo_url}:latest"
+      image = var.docker_image
 
       portMappings = [{
         containerPort = 50000
@@ -48,7 +42,7 @@ resource "aws_ecs_task_definition" "backend" {
       logConfiguration = {
         logDriver = "awslogs"
         options = {
-          awslogs-group         = "/ecs/simple-backend"
+          awslogs-group         = aws_cloudwatch_log_group.ecs.name
           awslogs-region        = var.aws_region
           awslogs-stream-prefix = "ecs"
         }
@@ -57,21 +51,21 @@ resource "aws_ecs_task_definition" "backend" {
   ])
 }
 
-resource "aws_ecs_service" "backend" {
+resource "aws_ecs_service" "this" {
   name            = "backend-service"
   cluster         = aws_ecs_cluster.this.id
-  task_definition = aws_ecs_task_definition.backend.arn
+  task_definition = aws_ecs_task_definition.this.arn
   desired_count   = 2
   launch_type     = "FARGATE"
 
   network_configuration {
     subnets          = var.subnet_ids
-    security_groups  = [aws_security_group.ecs_sg.id]
+    security_groups  = [aws_security_group.ecs.id]
     assign_public_ip = true
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.backend.arn
+    target_group_arn = aws_lb_target_group.this.arn
     container_name   = "backend"
     container_port   = 50000
   }
