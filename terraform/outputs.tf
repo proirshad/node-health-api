@@ -1,5 +1,5 @@
 output "alb_dns_name" {
-  value = aws_lb.backend.dns_name
+  value = aws_lb.this.dns_name
 }
 
 output "ecs_cluster_name" {
@@ -7,5 +7,5 @@ output "ecs_cluster_name" {
 }
 
 output "ecs_service_name" {
-  value = aws_ecs_service.backend.name
+  value = aws_ecs_service.this.name
 }
