@@ -30,7 +30,8 @@ resource "aws_iam_role" "ecs_execution" {
   })
 
   lifecycle {
-    prevent_destroy = false
+    prevent_destroy = false        # allow safe destroy
+    ignore_changes  = [name]       # agar role pehle se exist kare to ignore
   }
 }
 
