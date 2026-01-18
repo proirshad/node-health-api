@@ -6,6 +6,10 @@ on:
     branches:
       - main
 
+permissions:  # <-- add this
+  id-token: write
+  contents: read
+
 jobs:
 # -------------------------------
 # 1. UNIT TESTING
