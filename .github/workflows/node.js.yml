@@ -28,6 +28,6 @@ jobs:
       - name: upload test result file
         uses: actions/upload-artifact@v5
         with:
-           name: mocha-test-result
-           path: test-result.xml 
+           name: mocha test.js
+           path: test-results.xml 
 
