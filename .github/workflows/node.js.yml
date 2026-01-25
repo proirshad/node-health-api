@@ -58,7 +58,7 @@ jobs:
         run: |
           echo "Checking generated files..."
           ls -lrth
-          test -f coverage
+          test -d coverage
 
       - name: upload test result file
         uses: actions/upload-artifact@v5
