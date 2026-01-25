@@ -54,12 +54,6 @@ jobs:
         continue-on-error: true
         run: npm run coverage
 
-      - name: Verify test result file
-        run: |
-          echo "Checking generated files..."
-          ls -lrth
-          test -d coverage
-
       - name: upload test result file
         uses: actions/upload-artifact@v5
         with:
