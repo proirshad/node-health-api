@@ -18,7 +18,9 @@ jobs:
           node-version: 18 
 
       - name: install dependencies  
-        run: npm install 
+        run: | 
+          npm install
+          ls -lrth  
 
       - name: unit testing
         run: npm test 
