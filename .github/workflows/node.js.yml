@@ -58,10 +58,11 @@ jobs:
         run: |
           echo "Checking generated files..."
           ls -lrth
-          test -f test-results.xml
+          test -f coverage
 
       - name: upload test result file
         uses: actions/upload-artifact@v5
         with:
-           name: mocha test.js
-           path: test-results.xml 
+           name: code-coverage-result
+           path: coverage
+           retention-days: 5 
