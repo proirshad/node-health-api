@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 50000;
 
+/* ROUTES */
 app.get('/health', (req, res) => {
   res.json({
     status: 'healthy',
@@ -24,10 +25,14 @@ app.get('/', (req, res) => {
   });
 });
 
-/**
- * ✅ IMPORTANT PART
- * Server only starts if file is run directly
- */
+/* ✅ 404 HANDLER — ADD HERE */
+app.use((req, res) => {
+  res.status(404).json({
+    error: "Route not found"
+  });
+});
+
+/* SERVER START (only when run directly) */
 if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

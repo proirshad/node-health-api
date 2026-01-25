@@ -18,12 +18,16 @@ jobs:
           node-version: 18 
 
       - name: install dependencies  
-        run: | 
-          npm install
-          ls -lrth  
+        run:  npm install
 
       - name: unit testing
         run: npm test 
+
+      - name: Verify test result file
+        run: |
+          echo "Checking generated files..."
+          ls -lrth
+          test -f test-results.xml
 
       - name: upload test result file
         uses: actions/upload-artifact@v5
@@ -31,3 +35,33 @@ jobs:
            name: mocha test.js
            path: test-results.xml 
 
+  code-coverage:
+    name: code-coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v4
+        
+      - name: setup nodeJS version -18
+        uses: actions/setup-node@v3
+        with: 
+          node-version: 18 
+
+      - name: install dependencies  
+        run:  npm install
+
+      - name: code coverage 
+        continue-on-error: true
+        run: npm run coverage
+
+      - name: Verify test result file
+        run: |
+          echo "Checking generated files..."
+          ls -lrth
+          test -f test-results.xml
+
+      - name: upload test result file
+        uses: actions/upload-artifact@v5
+        with:
+           name: mocha test.js
+           path: test-results.xml 
